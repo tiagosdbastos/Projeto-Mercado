@@ -16,13 +16,19 @@ jobs:
         with:
           fetch-depth: 0  # Clonagem completa para melhor análise
 
-      - name: Configurar o ambiente para C no Windows
-        run: choco install mingw -y  # Instala o MinGW, que inclui o GCC para Windows
-
-      - name: Build the project
+      - name: Instalar MinGW e configurar GCC no Windows
         run: |
-          set PATH=C:\ProgramData\chocolatey\bin;C:\tools\mingw64\bin;%PATH%
-          gcc Mercado.c -o Mercado.exe  # Compila o código C no Windows
+          choco install mingw -y
+          echo "MinGW instalado. Verificando o caminho..."
+          echo $env:Path
+          $env:Path += ";C:\ProgramData\chocolatey\bin;C:\tools\mingw64\bin"
+          echo "Novo caminho:"
+          echo $env:Path
+
+      - name: Compilar o projeto
+        shell: bash
+        run: |
+          gcc Mercado.c -o Mercado.exe
 
       - name: Run SonarCloud Scan
         env:
